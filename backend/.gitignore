@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Caches and build outputs
+.cache/
+build/
+dist/
+
+# Environments & Sensitive Data
+.env
+venv/
+.env.local

@@ -13,8 +13,8 @@ import { useAuth } from "@/lib/auth";
 type Errors = Partial<Record<"author" | "yesterday" | "today", string>>;
 
 export function StandupForm({ onSubmitted }: { onSubmitted?: () => void }) {
-  const { username } = useAuth();
-  const [author, setAuthor] = useState(username ?? "");
+  const { user } = useAuth();
+  const [author, setAuthor] = useState(user?.name ?? "");
   const [yesterday, setYesterday] = useState("");
   const [today, setToday] = useState("");
   const [blockers, setBlockers] = useState("");

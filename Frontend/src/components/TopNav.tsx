@@ -5,7 +5,8 @@ import { WeatherWidget } from "./WeatherWidget";
 import logo from "@/assets/konvergenz-logo.svg.asset.json";
 
 export function TopNav() {
-  const { username, signOut } = useAuth();
+  const { user, signOut } = useAuth();
+  const username = user?.name ?? "Unknown";
   return (
     <header className="sticky top-0 z-40 bg-[color:var(--primary-deep)] text-white shadow-[var(--shadow-elevated)]">
       <div className="mx-auto flex h-20 max-w-6xl items-center justify-between gap-4 px-4">

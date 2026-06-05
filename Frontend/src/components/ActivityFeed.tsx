@@ -81,7 +81,7 @@ export function ActivityFeed({ refreshKey }: { refreshKey: number }) {
           const avatarBg = isRed ? "bg-[color:var(--brand-red)]" : "bg-[color:var(--primary-deep)]";
           return (
             <article
-              key={p.id}
+              key={p._id}
               className="rounded-md border border-border bg-white p-4 transition hover:border-[color:var(--primary)]/40 hover:shadow-[var(--shadow-card)]"
             >
               <header className="mb-3 flex flex-wrap items-center justify-between gap-2">

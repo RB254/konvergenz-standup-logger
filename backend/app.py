@@ -20,8 +20,9 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# MongoDB Connection
-client = MongoClient("mongodb://localhost:27017/")
+# MongoDB Connection (Dynamically fallback to local if running outside of Render)
+mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
+client = MongoClient(mongo_uri)
 db = client["standup_db"]
 posts_collection = db["posts"]
 users_collection = db["users"]
@@ -286,4 +287,6 @@ def provision_user(current_user):
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    # Dynamically read Render's binding network port environment target
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

@@ -20,10 +20,10 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'upload
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# MongoDB Connection (Dynamically fallback to local if running outside of Render)
-mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017/")
+# MongoDB Connection (Dynamically fallback to cloud production if no env var set)
+mongo_uri = os.environ.get("MONGO_URI", "mongodb+srv://kns_admin:kns@lui.tcqo2zx.mongodb.net/konvergenz?appName=lui")
 client = MongoClient(mongo_uri)
-db = client["standup_db"]
+db = client["konvergenz"]
 posts_collection = db["posts"]
 users_collection = db["users"]
 

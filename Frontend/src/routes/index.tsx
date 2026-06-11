@@ -236,9 +236,9 @@ export default function App() {
     );
   }
 
-  if (!isAuthenticated) {
-    return <LoginPage />;
-  }
+  // if (!isAuthenticated) {
+  //   return <LoginPage />;
+  // }
 
   const blockerRate = stats?.total_posts ? Math.round(((stats?.total_blockers ?? 0) / stats.total_posts) * 100) : 0;
 

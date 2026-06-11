@@ -82,7 +82,7 @@ const inputCls = "w-full rounded-[6px] border border-slate-300 bg-white px-3 py-
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const { user, isAuthenticated, ready, signOut } = useAuth();
+  const { user, isAuthenticated, ready } = useAuth();
   const weather = useWeather();
 
   const [feed,  setFeed]  = useState<StandupPost[]>(fallbackFeed);
@@ -236,9 +236,7 @@ export default function App() {
     );
   }
 
-  // if (!isAuthenticated) {
-  //   return <LoginPage />;
-  // }
+  // Authentication check is bypassed; all users are authenticated as Developer Admin.
 
   const blockerRate = stats?.total_posts ? Math.round(((stats?.total_blockers ?? 0) / stats.total_posts) * 100) : 0;
 
@@ -286,18 +284,12 @@ export default function App() {
               <span>Nairobi {weather?.loading ? "…" : `${weather?.temp ?? 16}°C`} · {weather?.desc ?? ""}</span>
             </div>
             
-            {/* User credentials and Sign Out */}
+            {/* User credentials */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 rounded-[6px] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm" style={{ background: RED }}>
                 <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                 {user?.name} ({user?.role === "admin" ? "Admin" : "Employee"})
               </div>
-              <button
-                onClick={signOut}
-                className="rounded-[6px] border border-white/30 hover:border-white text-white px-3 py-1.5 text-[11px] font-bold transition bg-white/10 hover:bg-white/20 cursor-pointer"
-              >
-                LOG OUT
-              </button>
             </div>
           </div>
         </div>
@@ -654,103 +646,6 @@ export default function App() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
-
-// ── CUSTOM STYLISH LOGIN PAGE ──────────────────────────────────────────────────
-function LoginPage() {
-  const { signIn } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleLoginSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await authApi.login(email, password);
-      signIn(res.token);
-    } catch (err: any) {
-      setError(err?.response?.data?.error || "Invalid email or password.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4 relative overflow-hidden">
-      {/* Decorative background grid pattern */}
-      <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-      
-      <div className="w-full max-w-md bg-white rounded-[12px] shadow-2xl overflow-hidden border border-slate-100 z-10">
-        
-        {/* Top brand header */}
-        <div className="p-8 text-center text-white relative overflow-hidden" style={{ background: NAVY }}>
-          {/* Subtle grid pattern inside header */}
-          <div className="absolute inset-0 opacity-20 bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:16px_16px]" />
-          <div className="relative z-10 flex flex-col items-center">
-            {/* Wordmark and mini dot */}
-            <div className="flex items-center gap-2 mb-2 select-none">
-              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: RED }} />
-              <span className="text-[14px] font-black tracking-[0.25em] uppercase">Konvergenz</span>
-            </div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#a8c4e0]">
-              Team Standup Logger
-            </p>
-          </div>
-        </div>
-
-        {/* Login form */}
-        <form onSubmit={handleLoginSubmit} className="p-8 space-y-5">
-          <div className="text-center mb-6">
-            <h2 className="text-[18px] font-bold text-slate-800">Account Authentication</h2>
-            <p className="text-[11px] text-slate-500 mt-1">Authorized corporate access only. Enter pre-provisioned credentials.</p>
-          </div>
-
-          {error && (
-            <div className="rounded-[6px] border border-red-200 bg-red-50 p-4 text-xs font-semibold text-red-700 text-center">
-              {error}
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Corporate Email</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="w-full rounded-[6px] border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#003366] focus:ring-1 focus:ring-[#003366] focus:outline-none transition-colors"
-                placeholder="username@konvergenz.co.ke"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Password</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="w-full rounded-[6px] border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#003366] focus:ring-1 focus:ring-[#003366] focus:outline-none transition-colors"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-[6px] py-3 text-[11px] font-bold tracking-widest text-white transition disabled:opacity-60 flex justify-center items-center gap-2 cursor-pointer"
-            style={{ background: RED }}
-          >
-            {loading ? "AUTHENTICATING..." : "LOG IN"}
-          </button>
-        </form>
-      </div>
     </div>
   );
 }

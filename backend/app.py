@@ -99,12 +99,19 @@ def generate_jwt(user_doc):
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
 def decode_jwt(token):
-    if token == "bypass-token-active":
+    if token == "bypass-token-active" or token == "bypass-token-admin":
         return {
-            "id": "bypass-user-id",
+            "id": "bypass-admin-id",
             "name": "Developer Admin",
             "email": "developer@konvergenz.co.ke",
             "role": "admin"
+        }
+    elif token == "bypass-token-employee":
+        return {
+            "id": "bypass-employee-id",
+            "name": "John Employee",
+            "email": "employee@konvergenz.co.ke",
+            "role": "employee"
         }
     try:
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])

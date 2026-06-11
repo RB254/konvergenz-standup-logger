@@ -82,7 +82,7 @@ const inputCls = "w-full rounded-[6px] border border-slate-300 bg-white px-3 py-
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const { user, isAuthenticated, ready } = useAuth();
+  const { user, isAuthenticated, ready, switchRole } = useAuth();
   const weather = useWeather();
 
   const [feed,  setFeed]  = useState<StandupPost[]>(fallbackFeed);
@@ -128,7 +128,13 @@ export default function App() {
       const id = setInterval(fetchData, 10000);
       return () => clearInterval(id);
     }
-  }, [isAuthenticated, fetchData]);
+  }, [isAuthenticated, user, fetchData]);
+
+  useEffect(() => {
+    if (user?.role !== "admin") {
+      setActiveTab("form");
+    }
+  }, [user]);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -284,11 +290,34 @@ export default function App() {
               <span>Nairobi {weather?.loading ? "…" : `${weather?.temp ?? 16}°C`} · {weather?.desc ?? ""}</span>
             </div>
             
-            {/* User credentials */}
+            {/* User credentials and Switch Role Dropdown */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 rounded-[6px] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm" style={{ background: RED }}>
                 <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                 {user?.name} ({user?.role === "admin" ? "Admin" : "Employee"})
+              </div>
+              
+              {/* Hover Dropdown for Switching Roles */}
+              <div className="relative group">
+                <button
+                  className="rounded-[6px] border border-white/30 hover:border-white text-white px-3 py-1.5 text-[11px] font-bold transition bg-white/10 hover:bg-white/20 cursor-pointer"
+                >
+                  LOG OUT
+                </button>
+                <div className="absolute right-0 top-full mt-1.5 w-44 rounded-[6px] bg-white shadow-lg border border-slate-200 py-1 hidden group-hover:block z-50">
+                  <button
+                    onClick={() => switchRole("admin")}
+                    className={`w-full text-left px-4 py-2 text-[11px] font-bold tracking-wide uppercase transition-colors hover:bg-slate-100 ${user?.role === "admin" ? "text-[#003366]" : "text-slate-600"}`}
+                  >
+                    Switch to Admin {user?.role === "admin" && "✓"}
+                  </button>
+                  <button
+                    onClick={() => switchRole("employee")}
+                    className={`w-full text-left px-4 py-2 text-[11px] font-bold tracking-wide uppercase transition-colors hover:bg-slate-100 ${user?.role === "employee" ? "text-[#003366]" : "text-slate-600"}`}
+                  >
+                    Switch to Employee {user?.role === "employee" && "✓"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
